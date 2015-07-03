@@ -1,3 +1,5 @@
+require 'alexa_generator/intent'
+
 module AlexaGenerator
   class IntentSchema
     attr_reader :intents

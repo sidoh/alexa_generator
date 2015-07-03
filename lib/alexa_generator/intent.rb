@@ -1,3 +1,5 @@
+require 'alexa_generator/slot'
+
 module AlexaGenerator
   class Intent
     attr_reader :name, :slots

@@ -1,6 +1,6 @@
 require 'bundler'
-Bundler.setup(:default, :development)
+Bundler.require(:default, :development)
 
-Rspec.configure do |config|
-  
-end
+require 'rspec'
+
+require 'alexa_generator'

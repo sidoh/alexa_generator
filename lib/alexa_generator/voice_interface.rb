@@ -1,3 +1,7 @@
+require 'alexa_generator/intent_schema'
+require 'alexa_generator/sample_utterance_template'
+require 'alexa_generator/slot_binding'
+
 require 'set'
 
 module AlexaGenerator

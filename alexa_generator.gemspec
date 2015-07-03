@@ -12,7 +12,8 @@ Gem::Specification.new do |gem|
   gem.email    = 'chris@sidoh.org'
   gem.homepage = 'http://github.com/sidoh/alexa_generator'
 
-  gem.add_development_dependency('rspec', [">= 2.0.0"])
+  gem.add_development_dependency('rspec', [">= 3.0.0"])
+  gem.add_development_dependency('rake')
 
   ignores  = File.readlines(".gitignore").grep(/\S+/).map(&:chomp)
   dotfiles = %w[.gitignore]
