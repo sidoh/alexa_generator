@@ -32,13 +32,19 @@ module AlexaGenerator
           slot_value_combinations = slot_values.first
 
           if slot_values.count > 1
-            slot_value_combinations = slot_value_combinations.product(slot_values[1..-1])
+            remaining_values = slot_values[1..-1]
+            slot_value_combinations = slot_value_combinations.product(*remaining_values)
+          else
+            slot_value_combinations = slot_value_combinations.map { |x| [x] }
           end
 
           slot_value_combinations.each do |value_binding|
             raw_template = template.template.dup
 
+            # puts value_binding.inspect
+
             value_binding.each do |binding|
+              # puts "----> #{binding}"
               binding.bind_to_template!( raw_template )
             end
 
