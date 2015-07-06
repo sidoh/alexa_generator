@@ -1,10 +1,10 @@
 require 'spec_helper'
 require 'json'
 
-describe AlexaGenerator::VoiceInterface do
+describe AlexaGenerator::InteractionModel do
   context 'builder' do
     it 'should build a valid voice interface' do
-      iface = AlexaGenerator::VoiceInterface.build do |iface|
+      iface = AlexaGenerator::InteractionModel.build do |iface|
         iface.add_intent(:IntentOne) do |intent|
          intent.add_slot(:SlotOne, AlexaGenerator::Slot::SlotType::LITERAL) do |slot|
             slot.add_binding('value1')
@@ -14,7 +14,7 @@ describe AlexaGenerator::VoiceInterface do
         end
       end
 
-      expect(iface).to be_an_instance_of(AlexaGenerator::VoiceInterface)
+      expect(iface).to be_an_instance_of(AlexaGenerator::InteractionModel)
       expect(iface.intent_schema).to eq(
                                          {
                                              intents: [
@@ -32,7 +32,7 @@ describe AlexaGenerator::VoiceInterface do
     end
 
     it 'should produce bound utterances' do
-      iface = AlexaGenerator::VoiceInterface.build do |iface|
+      iface = AlexaGenerator::InteractionModel.build do |iface|
         iface.add_intent(:MyIntent) do |intent|
           intent.add_slot(:SlotOne, AlexaGenerator::Slot::SlotType::LITERAL) do |slot|
             slot.add_binding('make me a sandwich')
@@ -75,7 +75,7 @@ describe AlexaGenerator::VoiceInterface do
     slot_bindings = []
 
     it 'should produce utterances' do
-      actual = AlexaGenerator::VoiceInterface.new(intents, utterance_templates, slot_bindings).sample_utterances(:MyIntent)
+      actual = AlexaGenerator::InteractionModel.new(intents, utterance_templates, slot_bindings).sample_utterances(:MyIntent)
       expected = [ "#{utterance_templates.first.intent_name} #{utterance_templates.first.template}" ]
 
       expect(actual).to eq(expected)
@@ -97,7 +97,7 @@ describe AlexaGenerator::VoiceInterface do
     ]
 
     it 'should produce bound utterances' do
-      actual = AlexaGenerator::VoiceInterface.new(intents, utterance_templates, slot_bindings).sample_utterances(:MyIntent)
+      actual = AlexaGenerator::InteractionModel.new(intents, utterance_templates, slot_bindings).sample_utterances(:MyIntent)
 
       expect(actual.count).to eq(slot_bindings.count)
       expect(actual).to include('MyIntent Alexa, please {make me a sandwich|SlotOne}')
@@ -130,7 +130,7 @@ describe AlexaGenerator::VoiceInterface do
     ]
 
     it 'should produce bound utterances' do
-      actual = AlexaGenerator::VoiceInterface.new(intents, utterance_templates, slot_bindings).sample_utterances(:MyIntent)
+      actual = AlexaGenerator::InteractionModel.new(intents, utterance_templates, slot_bindings).sample_utterances(:MyIntent)
 
       expect(actual.count).to eq(8)
       expect(actual).to include('MyIntent Alexa, please {fix my motorcycle|SlotOne} {one|SlotTwo} at {noon|SlotThree}')

@@ -5,7 +5,7 @@ require 'alexa_generator/slot_binding'
 require 'set'
 
 module AlexaGenerator
-  class VoiceInterface
+  class InteractionModel
     attr_reader :intents
 
     class Builder
@@ -23,7 +23,7 @@ module AlexaGenerator
       end
 
       def create
-        VoiceInterface.new(@intents, @utterance_templates, @bindings)
+        InteractionModel.new(@intents, @utterance_templates, @bindings)
       end
     end
 

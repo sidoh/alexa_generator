@@ -1,2 +1,2 @@
-require 'alexa_generator/voice_interface'
+require 'alexa_generator/interaction_model'
 require 'alexa_generator/version'
