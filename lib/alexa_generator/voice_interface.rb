@@ -14,7 +14,8 @@ module AlexaGenerator
       end
 
       def add_intent(name, &block)
-
+        builder = Intent.build(name, &block)
+        @intents.push(builder.create)
       end
     end
 

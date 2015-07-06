@@ -10,16 +10,14 @@ module AlexaGenerator
       def initialize(name)
         @name = name
         @slots = []
-        @bindings = {}
+        @bindings = []
       end
 
       def add_slot(name, type, &block)
         builder = Slot.build(name, type, &block)
 
         slot_bindings = builder.bindings.map { |x| SlotBinding.new(name, x) }
-
-        @bindings[name] ||= []
-        @bindings[name].concat(slot_bindings)
+        @bindings.concat(slot_bindings)
 
         @slots.push(builder.create)
       end
