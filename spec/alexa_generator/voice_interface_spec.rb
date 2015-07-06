@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'json'
 
 describe AlexaGenerator::VoiceInterface do
   context 'builder' do
@@ -14,6 +15,20 @@ describe AlexaGenerator::VoiceInterface do
       end
 
       expect(iface).to be_an_instance_of(AlexaGenerator::VoiceInterface)
+      expect(iface.intent_schema).to eq(
+                                         {
+                                             intents: [
+                                                 {
+                                                     intent: :IntentOne,
+                                                     slots: [
+                                                         {
+                                                             name: :SlotOne,
+                                                             type: AlexaGenerator::Slot::SlotType::LITERAL
+                                                         }
+                                                     ]
+                                                 }
+                                             ]
+                                         })
     end
 
     it 'should produce bound utterances' do

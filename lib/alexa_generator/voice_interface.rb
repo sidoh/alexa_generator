@@ -34,6 +34,22 @@ module AlexaGenerator
       @slot_bindings = slot_bindings.group_by { |x| x.slot_name }
     end
 
+    def intent_schema
+      {
+          intents: @intents.values.map do |intent|
+            {
+                intent: intent.name,
+                slots: intent.slots.map do |slot|
+                  {
+                      name: slot.name,
+                      type: slot.type
+                  }
+                end
+            }
+          end
+      }
+    end
+
     def sample_utterances(intent_name)
       templates = @utterance_templates[intent_name] || []
       utterances = Set.new
