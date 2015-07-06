@@ -1,6 +1,57 @@
 require 'spec_helper'
 
 describe AlexaGenerator::VoiceInterface do
+  context 'builder' do
+    it 'should build a valid voice interface' do
+      iface = AlexaGenerator::VoiceInterface.build do |iface|
+        iface.add_intent(:IntentOne) do |intent|
+         intent.add_slot(:SlotOne, AlexaGenerator::Slot::SlotType::LITERAL) do |slot|
+            slot.add_binding('value1')
+          end
+
+          intent.add_utterance_template('test {SlotOne} test')
+        end
+      end
+
+      expect(iface).to be_an_instance_of(AlexaGenerator::VoiceInterface)
+    end
+
+    it 'should produce bound utterances' do
+      iface = AlexaGenerator::VoiceInterface.build do |iface|
+        iface.add_intent(:MyIntent) do |intent|
+          intent.add_slot(:SlotOne, AlexaGenerator::Slot::SlotType::LITERAL) do |slot|
+            slot.add_binding('make me a sandwich')
+            slot.add_binding('fix my motorcycle')
+          end
+
+          intent.add_slot(:SlotTwo, AlexaGenerator::Slot::SlotType::NUMBER) do |slot|
+            slot.add_binding('one')
+            slot.add_binding('two')
+          end
+
+          intent.add_slot(:SlotThree, AlexaGenerator::Slot::SlotType::TIME) do |slot|
+            slot.add_binding('6 a.m.')
+            slot.add_binding('noon')
+          end
+
+          intent.add_utterance_template('Alexa, please {SlotOne} {SlotTwo} at {SlotThree}')
+        end
+      end
+
+      actual = iface.sample_utterances(:MyIntent)
+
+      expect(actual.count).to eq(8)
+      expect(actual).to include('MyIntent Alexa, please {fix my motorcycle|SlotOne} {one|SlotTwo} at {noon|SlotThree}')
+      expect(actual).to include('MyIntent Alexa, please {fix my motorcycle|SlotOne} {two|SlotTwo} at {noon|SlotThree}')
+      expect(actual).to include('MyIntent Alexa, please {make me a sandwich|SlotOne} {one|SlotTwo} at {noon|SlotThree}')
+      expect(actual).to include('MyIntent Alexa, please {make me a sandwich|SlotOne} {two|SlotTwo} at {noon|SlotThree}')
+      expect(actual).to include('MyIntent Alexa, please {fix my motorcycle|SlotOne} {one|SlotTwo} at {6 a.m.|SlotThree}')
+      expect(actual).to include('MyIntent Alexa, please {fix my motorcycle|SlotOne} {two|SlotTwo} at {6 a.m.|SlotThree}')
+      expect(actual).to include('MyIntent Alexa, please {make me a sandwich|SlotOne} {one|SlotTwo} at {6 a.m.|SlotThree}')
+      expect(actual).to include('MyIntent Alexa, please {make me a sandwich|SlotOne} {two|SlotTwo} at {6 a.m.|SlotThree}')
+    end
+  end
+
   context 'with no templates' do
     intents = [ AlexaGenerator::Intent.new( :MyIntent, [] ) ]
     utterance_templates = [

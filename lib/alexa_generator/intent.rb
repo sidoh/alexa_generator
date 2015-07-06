@@ -1,16 +1,18 @@
 require 'alexa_generator/slot'
+require 'alexa_generator/sample_utterance_template'
 
 module AlexaGenerator
   class Intent
     attr_reader :name, :slots
 
     class Builder
-      attr_reader :bindings
+      attr_reader :bindings, :utterance_templates
 
       def initialize(name)
         @name = name
         @slots = []
         @bindings = []
+        @utterance_templates = []
       end
 
       def add_slot(name, type, &block)
@@ -20,6 +22,14 @@ module AlexaGenerator
         @bindings.concat(slot_bindings)
 
         @slots.push(builder.create)
+      end
+
+      def add_utterance_template(template)
+        add_utterance_templates(template)
+      end
+
+      def add_utterance_templates(*templates)
+        templates.each { |x| @utterance_templates.push(SampleUtteranceTemplate.new(@name, x)) }
       end
 
       def create

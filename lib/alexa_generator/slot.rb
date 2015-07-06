@@ -17,6 +17,10 @@ module AlexaGenerator
         @bindings = []
       end
 
+      def add_binding(value)
+        add_bindings(value)
+      end
+
       def add_bindings(*values)
         values.map { |v| @bindings.push(v) }
       end

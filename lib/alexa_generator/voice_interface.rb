@@ -11,11 +11,19 @@ module AlexaGenerator
     class Builder
       def initialize
         @intents = []
+        @bindings = []
+        @utterance_templates = []
       end
 
       def add_intent(name, &block)
         builder = Intent.build(name, &block)
+        @bindings.concat(builder.bindings)
+        @utterance_templates.concat(builder.utterance_templates)
         @intents.push(builder.create)
+      end
+
+      def create
+        VoiceInterface.new(@intents, @utterance_templates, @bindings)
       end
     end
 
@@ -27,7 +35,7 @@ module AlexaGenerator
     end
 
     def sample_utterances(intent_name)
-      templates = @utterance_templates[intent_name]
+      templates = @utterance_templates[intent_name] || []
       utterances = Set.new
 
       templates.each do |template|
@@ -70,6 +78,12 @@ module AlexaGenerator
       utterances.sort.map do |utterance|
         "#{intent_name} #{utterance}"
       end
+    end
+
+    def self.build(&block)
+      builder = Builder.new
+      block.call(builder)
+      builder.create
     end
   end
 end
