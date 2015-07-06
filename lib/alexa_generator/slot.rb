@@ -22,7 +22,7 @@ module AlexaGenerator
       end
 
       def add_bindings(*values)
-        @bindings.concat(*values)
+        @bindings.concat(values)
       end
 
       def create
