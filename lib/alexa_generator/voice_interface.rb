@@ -8,6 +8,16 @@ module AlexaGenerator
   class VoiceInterface
     attr_reader :intents
 
+    class Builder
+      def initialize
+        @intents = []
+      end
+
+      def add_intent(name, &block)
+
+      end
+    end
+
     def initialize(intents, utterance_templates, slot_bindings)
       @intents = Hash[ intents.map {|x| [x.name, x]} ]
 
