@@ -15,7 +15,9 @@ describe AlexaGenerator::Slot do
         end
       end
 
-      expect(intent.bindings).to eq({SlotOne: ['a', 'b', 'c']})
+      expect(intent.bindings).to be_an_instance_of(Hash)
+      expect(intent.bindings.keys).to eq([:SlotOne])
+      expect(intent.bindings[:SlotOne].map(&:value)).to eq(['a', 'b', 'c'])
     end
 
     it 'should create an intent when create is called' do
