@@ -2,6 +2,18 @@ require 'spec_helper'
 require 'json'
 
 describe AlexaGenerator::InteractionModel do
+  context 'invalid slot bindings' do
+    it 'should throw an exception' do
+      expect {
+        AlexaGenerator::InteractionModel.build do |iface|
+          iface.add_intent(:Intent) do |intent|
+            intent.add_utterance_template('{UndefinedSlot}')
+          end
+        end
+      }.to raise_error(AlexaGenerator::AlexaSyntaxError)
+    end
+  end
+
   context 'builder' do
     it 'should build a valid voice interface' do
       iface = AlexaGenerator::InteractionModel.build do |iface|
