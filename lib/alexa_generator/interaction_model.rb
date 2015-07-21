@@ -28,6 +28,16 @@ module AlexaGenerator
     end
 
     def initialize(intents, utterance_templates, slot_bindings)
+      # Validate that utterance templates reference only defined slots
+      all_referenced_slots = utterance_templates.map(&:referenced_slots).flatten
+      slot_names = Set.new(slot_bindings.map(&:slot_name))
+      undefined_slots = all_referenced_slots.reject { |x| slot_names.include?(x) }
+
+      if undefined_slots.any?
+        raise AlexaSyntaxError,
+              "The following slots referenced in utterances are undefined: #{undefined_slots.join ','}"
+      end
+
       @intents = Hash[ intents.map {|x| [x.name, x]} ]
 
       @utterance_templates = utterance_templates.group_by { |x| x.intent_name }
