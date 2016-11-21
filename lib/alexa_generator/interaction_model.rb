@@ -45,19 +45,25 @@ module AlexaGenerator
     end
 
     def intent_schema
-      {
-          intents: @intents.values.map do |intent|
-            {
-                intent: intent.name,
-                slots: intent.slots.map do |slot|
-                  {
-                      name: slot.name,
-                      type: slot.type
-                  }
-                end
-            }
-          end
-      }
+      out = { intents: [] }
+
+      @intents.values.each do |intent|
+        hash = { intent: intent.name }
+        slots = intent.slots.map do |slot|
+          {
+              name: slot.name,
+              type: slot.type
+          }
+        end
+        
+        if slots.size > 0 || !intent.name =~ /^AMAZON/
+          hash[:slots] = slots
+        end
+
+        out[:intents] << hash
+      end
+
+      out
     end
 
     def sample_utterances(intent_name)
