@@ -3,6 +3,26 @@ require 'alexa_generator/sample_utterance_template'
 
 module AlexaGenerator
   class Intent
+
+    module IntentType
+      CANCEL =      :"AMAZON.CancelIntent"
+      HELP =        :"AMAZON.HelpIntent"
+      LOOP_OFF =    :"AMAZON.LoopOffIntent"
+      LOOP_ON  =    :"AMAZON.LoopOnIntent"
+      NEXT =        :"AMAZON.NextIntent"
+      NO =          :"AMAZON.NoIntent"
+      PAUSE =       :"AMAZON.PauseIntent"
+      PREVIOUS =    :"AMAZON.PreviousIntent"
+      REPEAT =      :"AMAZON.RepeatIntent"
+      RESUME =      :"AMAZON.ResumeIntent"
+      SHUFFLE_OFF = :"AMAZON.ShuffleOffIntent"
+      SHUFFLE_ON =  :"AMAZON.ShuffleOnIntent"
+      START_OVER =  :"AMAZON.StartOverIntent"
+      STOP =        :"AMAZON.StopIntent"
+      YES =         :"AMAZON.YesIntent"
+    end
+
+
     attr_reader :name, :slots
 
     class Builder
