@@ -33,5 +33,13 @@ describe AlexaGenerator::Slot do
       expect(intent.slots.count).to eq(1)
       expect(intent.slots.first.name).to eq(:SlotOne)
     end
+    
+    it 'should whine when trying to add a slot to an Amazon intent' do
+      AlexaGenerator::Intent.build(AlexaGenerator::Intent::AmazonIntentType::CANCEL) do |intent|
+        expect {
+          intent.add_slot(:SlotOne, AlexaGenerator::Slot::SlotType::LITERAL)
+        }.to raise_error(AlexaGenerator::InvalidIntentError)
+      end
+    end
   end
 end

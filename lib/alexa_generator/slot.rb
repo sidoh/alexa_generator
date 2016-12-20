@@ -1,11 +1,15 @@
 module AlexaGenerator
   class Slot
     module SlotType
-      LITERAL = :LITERAL
-      NUMBER = :NUMBER
-      DATE = :DATE
-      TIME = :TIME
-      DURATION = :DURATION
+      LITERAL = :"AMAZON.LITERAL"
+      NUMBER = :"AMAZON.NUMBER"
+      DATE = :"AMAZON.DATE"
+      TIME = :"AMAZON.TIME"
+      DURATION = :"AMAZON.DURATION"
+      
+      def self.literal?(value)
+        [:LITERAL, LITERAL].include?(value.to_sym)
+      end
     end
 
     class Builder

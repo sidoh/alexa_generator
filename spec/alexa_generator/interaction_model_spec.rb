@@ -43,6 +43,56 @@ describe AlexaGenerator::InteractionModel do
                                          })
     end
 
+    it 'should allow built in intents' do
+      iface = AlexaGenerator::InteractionModel.build do |iface|
+        iface.add_intent(AlexaGenerator::Intent::AmazonIntentType::CANCEL)
+      end
+
+      expect(iface).to be_an_instance_of(AlexaGenerator::InteractionModel)
+      expect(iface.intent_schema).to eq(
+                                         {
+                                             intents: [
+                                                 {
+                                                     intent: :"AMAZON.CancelIntent",
+                                                     slots: []
+                                                 }
+                                             ]
+                                         })
+    end
+
+    it 'should combine custom and built in intents' do
+      iface = AlexaGenerator::InteractionModel.build do |iface|
+        iface.add_intent(AlexaGenerator::Intent::AmazonIntentType::CANCEL)
+        iface.add_intent(:IntentOne) do |intent|
+         intent.add_slot(:SlotOne, AlexaGenerator::Slot::SlotType::LITERAL) do |slot|
+            slot.add_binding('value1')
+          end
+
+          intent.add_utterance_template('test {SlotOne} test')
+        end
+      end
+
+      expect(iface).to be_an_instance_of(AlexaGenerator::InteractionModel)
+      expect(iface.intent_schema).to eq(
+                                         {
+                                             intents: [
+                                                 {
+                                                     intent: :"AMAZON.CancelIntent",
+                                                     slots: []
+                                                 },
+                                                 {
+                                                     intent: :IntentOne,
+                                                     slots: [
+                                                         {
+                                                             name: :SlotOne,
+                                                             type: AlexaGenerator::Slot::SlotType::LITERAL
+                                                         }
+                                                     ]
+                                                 }
+                                             ]
+                                         })
+    end
+
     it 'should produce bound utterances' do
       iface = AlexaGenerator::InteractionModel.build do |iface|
         iface.add_intent(:MyIntent) do |intent|
@@ -67,15 +117,10 @@ describe AlexaGenerator::InteractionModel do
 
       actual = iface.sample_utterances(:MyIntent)
 
-      expect(actual.count).to eq(8)
-      expect(actual).to include('MyIntent Alexa, please {fix my motorcycle|SlotOne} {one|SlotTwo} at {noon|SlotThree}')
-      expect(actual).to include('MyIntent Alexa, please {fix my motorcycle|SlotOne} {two|SlotTwo} at {noon|SlotThree}')
-      expect(actual).to include('MyIntent Alexa, please {make me a sandwich|SlotOne} {one|SlotTwo} at {noon|SlotThree}')
-      expect(actual).to include('MyIntent Alexa, please {make me a sandwich|SlotOne} {two|SlotTwo} at {noon|SlotThree}')
-      expect(actual).to include('MyIntent Alexa, please {fix my motorcycle|SlotOne} {one|SlotTwo} at {6 a.m.|SlotThree}')
-      expect(actual).to include('MyIntent Alexa, please {fix my motorcycle|SlotOne} {two|SlotTwo} at {6 a.m.|SlotThree}')
-      expect(actual).to include('MyIntent Alexa, please {make me a sandwich|SlotOne} {one|SlotTwo} at {6 a.m.|SlotThree}')
-      expect(actual).to include('MyIntent Alexa, please {make me a sandwich|SlotOne} {two|SlotTwo} at {6 a.m.|SlotThree}')
+      # only the literal ones get examples
+      expect(actual.count).to eq(2)
+      expect(actual).to include('MyIntent Alexa, please {fix my motorcycle|SlotOne} {SlotTwo} at {SlotThree}')
+      expect(actual).to include('MyIntent Alexa, please {make me a sandwich|SlotOne} {SlotTwo} at {SlotThree}')
     end
   end
 
@@ -144,15 +189,10 @@ describe AlexaGenerator::InteractionModel do
     it 'should produce bound utterances' do
       actual = AlexaGenerator::InteractionModel.new(intents, utterance_templates, slot_bindings).sample_utterances(:MyIntent)
 
-      expect(actual.count).to eq(8)
-      expect(actual).to include('MyIntent Alexa, please {fix my motorcycle|SlotOne} {one|SlotTwo} at {noon|SlotThree}')
-      expect(actual).to include('MyIntent Alexa, please {fix my motorcycle|SlotOne} {two|SlotTwo} at {noon|SlotThree}')
-      expect(actual).to include('MyIntent Alexa, please {make me a sandwich|SlotOne} {one|SlotTwo} at {noon|SlotThree}')
-      expect(actual).to include('MyIntent Alexa, please {make me a sandwich|SlotOne} {two|SlotTwo} at {noon|SlotThree}')
-      expect(actual).to include('MyIntent Alexa, please {fix my motorcycle|SlotOne} {one|SlotTwo} at {6 a.m.|SlotThree}')
-      expect(actual).to include('MyIntent Alexa, please {fix my motorcycle|SlotOne} {two|SlotTwo} at {6 a.m.|SlotThree}')
-      expect(actual).to include('MyIntent Alexa, please {make me a sandwich|SlotOne} {one|SlotTwo} at {6 a.m.|SlotThree}')
-      expect(actual).to include('MyIntent Alexa, please {make me a sandwich|SlotOne} {two|SlotTwo} at {6 a.m.|SlotThree}')
+      # only the literal ones get examples
+      expect(actual.count).to eq(2)
+      expect(actual).to include('MyIntent Alexa, please {fix my motorcycle|SlotOne} {SlotTwo} at {SlotThree}')
+      expect(actual).to include('MyIntent Alexa, please {make me a sandwich|SlotOne} {SlotTwo} at {SlotThree}')
     end
   end
 end
