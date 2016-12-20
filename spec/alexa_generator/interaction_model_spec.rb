@@ -45,7 +45,7 @@ describe AlexaGenerator::InteractionModel do
 
     it 'should allow built in intents' do
       iface = AlexaGenerator::InteractionModel.build do |iface|
-        iface.add_intent(AlexaGenerator::Intent::IntentType::CANCEL)
+        iface.add_intent(AlexaGenerator::Intent::AmazonIntentType::CANCEL)
       end
 
       expect(iface).to be_an_instance_of(AlexaGenerator::InteractionModel)
@@ -53,7 +53,8 @@ describe AlexaGenerator::InteractionModel do
                                          {
                                              intents: [
                                                  {
-                                                     intent: :"AMAZON.CancelIntent"
+                                                     intent: :"AMAZON.CancelIntent",
+                                                     slots: []
                                                  }
                                              ]
                                          })
@@ -61,7 +62,7 @@ describe AlexaGenerator::InteractionModel do
 
     it 'should combine custom and built in intents' do
       iface = AlexaGenerator::InteractionModel.build do |iface|
-        iface.add_intent(AlexaGenerator::Intent::IntentType::CANCEL)
+        iface.add_intent(AlexaGenerator::Intent::AmazonIntentType::CANCEL)
         iface.add_intent(:IntentOne) do |intent|
          intent.add_slot(:SlotOne, AlexaGenerator::Slot::SlotType::LITERAL) do |slot|
             slot.add_binding('value1')
@@ -76,7 +77,8 @@ describe AlexaGenerator::InteractionModel do
                                          {
                                              intents: [
                                                  {
-                                                     intent: :"AMAZON.CancelIntent"
+                                                     intent: :"AMAZON.CancelIntent",
+                                                     slots: []
                                                  },
                                                  {
                                                      intent: :IntentOne,
