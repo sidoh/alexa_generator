@@ -41,5 +41,17 @@ describe AlexaGenerator::Slot do
         }.to raise_error(AlexaGenerator::InvalidIntentError)
       end
     end
+    
+    it 'should allow you to use a builtin Amazon slot type not included in alexa_generator' do
+      builder = AlexaGenerator::Intent.build(:MyCustomIntent) do |intent|
+        intent.add_slot(:Episode, 'AMAZON.TVEpisode')
+      end
+      
+      intent = builder.create
+      
+      expect(intent.slots.count).to eq(1)
+      expect(intent.slots.first.name).to eq(:Episode)
+      expect(intent.slots.first.type).to eq('AMAZON.TVEpisode')
+    end
   end
 end

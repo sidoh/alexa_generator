@@ -43,7 +43,7 @@ module AlexaGenerator
 
     def self.build(name, type, &block)
       builder = Builder.new(name, type)
-      block.call(builder)
+      block.call(builder) if block
       builder
     end
   end
