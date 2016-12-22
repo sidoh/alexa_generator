@@ -30,7 +30,7 @@ module AlexaGenerator
     def initialize(intents, utterance_templates, slot_bindings)
       # Validate that utterance templates reference only defined slots
       all_referenced_slots = utterance_templates.map(&:referenced_slots).flatten
-      slot_names = Set.new(slot_bindings.map(&:slot_name))
+      slot_names = Set.new(intents.map(&:slots).flatten.map(&:name))
       undefined_slots = all_referenced_slots.reject { |x| slot_names.include?(x) }
 
       if undefined_slots.any?

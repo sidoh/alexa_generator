@@ -231,4 +231,15 @@ describe AlexaGenerator::InteractionModel do
       expect(type2_bindings).to contain_exactly(*%w(valueA))
     end
   end
+  
+  context 'with slots not having bindings' do
+    it 'should work' do
+      model = AlexaGenerator::InteractionModel.build do |iface|
+        iface.add_intent(:IntentOne) do |intent|
+          intent.add_slot(:SlotOne, AlexaGenerator::Slot::SlotType::DURATION)
+          intent.add_utterance_template('do something for {SlotOne}')
+        end
+      end
+    end
+  end
 end
