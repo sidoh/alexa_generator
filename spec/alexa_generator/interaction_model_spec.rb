@@ -140,17 +140,17 @@ describe AlexaGenerator::InteractionModel do
   end
 
   context 'with a single template' do
-    intents = [
-        AlexaGenerator::Intent.new(
-            :MyIntent, [ AlexaGenerator::Slot.new(:SlotOne, AlexaGenerator::Slot::SlotType::LITERAL) ]
-        )
-    ]
     utterance_templates = [
         AlexaGenerator::SampleUtteranceTemplate.new( :MyIntent, 'Alexa, please {SlotOne}')
     ]
     slot_bindings = [
         AlexaGenerator::SlotBinding.new( :SlotOne, 'make me a sandwich' ),
         AlexaGenerator::SlotBinding.new( :SlotOne, 'fix my motorcycle' )
+    ]
+    intents = [
+        AlexaGenerator::Intent.new(
+            :MyIntent, [ AlexaGenerator::Slot.new(:SlotOne, AlexaGenerator::Slot::SlotType::LITERAL, slot_bindings) ]
+        )
     ]
 
     it 'should produce bound utterances' do
@@ -163,28 +163,32 @@ describe AlexaGenerator::InteractionModel do
   end
 
   context 'with multiple templates' do
+    s1_bindings = [
+        AlexaGenerator::SlotBinding.new( :SlotOne, 'make me a sandwich' ),
+        AlexaGenerator::SlotBinding.new( :SlotOne, 'fix my motorcycle' )
+    ]
+    s2_bindings = [
+        AlexaGenerator::SlotBinding.new( :SlotTwo, 'one' ),
+        AlexaGenerator::SlotBinding.new( :SlotTwo, 'two' ),
+    ]
+    s3_bindings = [
+        AlexaGenerator::SlotBinding.new( :SlotThree, '6 a.m.' ),
+        AlexaGenerator::SlotBinding.new( :SlotThree, 'noon' ),
+    ]
+    
     intents = [
         AlexaGenerator::Intent.new(
             :MyIntent, [
-                         AlexaGenerator::Slot.new(:SlotOne, AlexaGenerator::Slot::SlotType::LITERAL),
-                         AlexaGenerator::Slot.new(:SlotTwo, AlexaGenerator::Slot::SlotType::NUMBER),
-                         AlexaGenerator::Slot.new(:SlotThree, AlexaGenerator::Slot::SlotType::TIME),
+                         AlexaGenerator::Slot.new(:SlotOne, AlexaGenerator::Slot::SlotType::LITERAL, s1_bindings),
+                         AlexaGenerator::Slot.new(:SlotTwo, AlexaGenerator::Slot::SlotType::NUMBER, s2_bindings),
+                         AlexaGenerator::Slot.new(:SlotThree, AlexaGenerator::Slot::SlotType::TIME, s3_bindings),
                      ],
         )
     ]
     utterance_templates = [
         AlexaGenerator::SampleUtteranceTemplate.new( :MyIntent, 'Alexa, please {SlotOne} {SlotTwo} at {SlotThree}')
     ]
-    slot_bindings = [
-        AlexaGenerator::SlotBinding.new( :SlotOne, 'make me a sandwich' ),
-        AlexaGenerator::SlotBinding.new( :SlotOne, 'fix my motorcycle' ),
-
-        AlexaGenerator::SlotBinding.new( :SlotTwo, 'one' ),
-        AlexaGenerator::SlotBinding.new( :SlotTwo, 'two' ),
-
-        AlexaGenerator::SlotBinding.new( :SlotThree, '6 a.m.' ),
-        AlexaGenerator::SlotBinding.new( :SlotThree, 'noon' ),
-    ]
+    slot_bindings = s1_bindings + s2_bindings + s3_bindings
 
     it 'should produce bound utterances' do
       actual = AlexaGenerator::InteractionModel.new(intents, utterance_templates, slot_bindings).sample_utterances(:MyIntent)
@@ -193,6 +197,38 @@ describe AlexaGenerator::InteractionModel do
       expect(actual.count).to eq(2)
       expect(actual).to include('MyIntent Alexa, please {fix my motorcycle|SlotOne} {SlotTwo} at {SlotThree}')
       expect(actual).to include('MyIntent Alexa, please {make me a sandwich|SlotOne} {SlotTwo} at {SlotThree}')
+    end
+  end
+  
+  context 'with custom slot types' do
+    model = AlexaGenerator::InteractionModel.build do |iface|
+      iface.add_intent(:IntentOne) do |intent|
+        intent.add_slot(:SlotOne, 'SlotType1') do |slot|
+          slot.add_bindings(*%w(value1 value2 value3))
+        end
+      end
+      
+      iface.add_intent(:IntentTwo) do |intent|
+        intent.add_slot(:SlotA, 'SlotType1') do |slot|
+          slot.add_binding('value4')
+        end
+        
+        intent.add_slot(:SlotB, :SlotType2) do |slot|
+          slot.add_binding('valueA')
+        end
+        
+        intent.add_slot(:SlabC, AlexaGenerator::Slot::SlotType::NUMBER)
+      end
+    end
+    
+    it 'should map slot bindings appropriately' do
+      expect(model.custom_slot_types).to contain_exactly(*%w(SlotType1 SlotType2))
+      
+      type1_bindings = model.slot_type_values('SlotType1')
+      expect(type1_bindings).to contain_exactly(*%w(value1 value2 value3 value4))
+      
+      type2_bindings = model.slot_type_values('SlotType2')
+      expect(type2_bindings).to contain_exactly(*%w(valueA))
     end
   end
 end

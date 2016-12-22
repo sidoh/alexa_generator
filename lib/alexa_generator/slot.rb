@@ -10,6 +10,10 @@ module AlexaGenerator
       def self.literal?(value)
         [:LITERAL, LITERAL].include?(value.to_sym)
       end
+      
+      def self.custom?(value)
+        !literal?(value) && !value.to_s.start_with?('AMAZON.')
+      end
     end
 
     class Builder
@@ -30,15 +34,16 @@ module AlexaGenerator
       end
 
       def create
-        Slot.new(@name, @type)
+        Slot.new(@name, @type, @bindings)
       end
     end
 
-    attr_reader :name, :type
+    attr_reader :name, :type, :bindings
 
-    def initialize(name, type)
+    def initialize(name, type, bindings)
       @name = name.to_sym
       @type = type
+      @bindings = bindings
     end
 
     def self.build(name, type, &block)

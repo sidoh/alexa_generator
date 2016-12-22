@@ -92,10 +92,7 @@ module AlexaGenerator
           slot_value_combinations.each do |value_binding|
             raw_template = template.template.dup
 
-            # puts value_binding.inspect
-
             value_binding.each do |binding|
-              # puts "----> #{binding}"
               binding.bind_to_template!( raw_template )
             end
 
@@ -110,6 +107,26 @@ module AlexaGenerator
       utterances.sort.map do |utterance|
         "#{intent_name} #{utterance}"
       end
+    end
+    
+    def slot_type_values(slot_type)
+      bindings = Set.new
+      @intents.values.each do |intent|
+        intent.slots.each do |slot|
+          if slot.type.to_s == slot_type.to_s
+            bindings += slot.bindings
+          end
+        end
+      end
+      bindings.to_a
+    end
+    
+    def custom_slot_types
+      slots = collect_slot_types
+      custom_types = slots.values.select do |x|
+        AlexaGenerator::Slot::SlotType.custom?(x)
+      end
+      Set.new(custom_types).to_a
     end
 
     def collect_slot_types
