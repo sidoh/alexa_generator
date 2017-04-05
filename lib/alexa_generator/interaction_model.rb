@@ -46,17 +46,21 @@ module AlexaGenerator
 
     def intent_schema
       intents = []
-      
+
       @intents.values.each do |intent|
-        slots = []
-        
-        intent.slots.each do |slot|
-          slots << {name: slot.name, type: slot.type}
+        if intent.slots.any?
+          slots = []
+
+          intent.slots.each do |slot|
+            slots << {name: slot.name, type: slot.type}
+          end
+
+          intents << {intent: intent.name, slots: slots}
+        else
+          intents << {intent: intent.name}
         end
-        
-        intents << {intent: intent.name, slots: slots}
       end
-      
+
       { intents: intents }
     end
 
@@ -70,8 +74,8 @@ module AlexaGenerator
         relevant_slots = template.referenced_slots
 
         # Amazon wants only the LITERAL ones
-        relevant_slots.select! do |s| 
-          AlexaGenerator::Slot::SlotType.literal?(slot_types[s.to_sym]) 
+        relevant_slots.select! do |s|
+          AlexaGenerator::Slot::SlotType.literal?(slot_types[s.to_sym])
         end
 
         # Compute all possible value bindings for the relevant slots
@@ -108,7 +112,7 @@ module AlexaGenerator
         "#{intent_name} #{utterance}"
       end
     end
-    
+
     def slot_type_values(slot_type)
       bindings = Set.new
       @intents.values.each do |intent|
@@ -120,7 +124,7 @@ module AlexaGenerator
       end
       bindings.to_a
     end
-    
+
     def custom_slot_types
       slots = collect_slot_types
       custom_types = slots.values.select do |x|

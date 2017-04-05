@@ -53,8 +53,7 @@ describe AlexaGenerator::InteractionModel do
                                          {
                                              intents: [
                                                  {
-                                                     intent: :"AMAZON.CancelIntent",
-                                                     slots: []
+                                                     intent: :"AMAZON.CancelIntent"
                                                  }
                                              ]
                                          })
@@ -77,8 +76,7 @@ describe AlexaGenerator::InteractionModel do
                                          {
                                              intents: [
                                                  {
-                                                     intent: :"AMAZON.CancelIntent",
-                                                     slots: []
+                                                     intent: :"AMAZON.CancelIntent"
                                                  },
                                                  {
                                                      intent: :IntentOne,
@@ -175,7 +173,7 @@ describe AlexaGenerator::InteractionModel do
         AlexaGenerator::SlotBinding.new( :SlotThree, '6 a.m.' ),
         AlexaGenerator::SlotBinding.new( :SlotThree, 'noon' ),
     ]
-    
+
     intents = [
         AlexaGenerator::Intent.new(
             :MyIntent, [
@@ -199,7 +197,7 @@ describe AlexaGenerator::InteractionModel do
       expect(actual).to include('MyIntent Alexa, please {make me a sandwich|SlotOne} {SlotTwo} at {SlotThree}')
     end
   end
-  
+
   context 'with custom slot types' do
     model = AlexaGenerator::InteractionModel.build do |iface|
       iface.add_intent(:IntentOne) do |intent|
@@ -207,31 +205,31 @@ describe AlexaGenerator::InteractionModel do
           slot.add_bindings(*%w(value1 value2 value3))
         end
       end
-      
+
       iface.add_intent(:IntentTwo) do |intent|
         intent.add_slot(:SlotA, 'SlotType1') do |slot|
           slot.add_binding('value4')
         end
-        
+
         intent.add_slot(:SlotB, :SlotType2) do |slot|
           slot.add_binding('valueA')
         end
-        
+
         intent.add_slot(:SlabC, AlexaGenerator::Slot::SlotType::NUMBER)
       end
     end
-    
+
     it 'should map slot bindings appropriately' do
       expect(model.custom_slot_types).to contain_exactly(*%w(SlotType1 SlotType2))
-      
+
       type1_bindings = model.slot_type_values('SlotType1')
       expect(type1_bindings).to contain_exactly(*%w(value1 value2 value3 value4))
-      
+
       type2_bindings = model.slot_type_values('SlotType2')
       expect(type2_bindings).to contain_exactly(*%w(valueA))
     end
   end
-  
+
   context 'with slots not having bindings' do
     it 'should work' do
       model = AlexaGenerator::InteractionModel.build do |iface|
@@ -240,6 +238,24 @@ describe AlexaGenerator::InteractionModel do
           intent.add_utterance_template('do something for {SlotOne}')
         end
       end
+    end
+  end
+
+  context 'with no slots' do
+    it 'should not show the slots field' do
+      iface = AlexaGenerator::InteractionModel.build do |iface|
+        iface.add_intent(AlexaGenerator::Intent::AmazonIntentType::CANCEL)
+      end
+
+      expect(iface).to be_an_instance_of(AlexaGenerator::InteractionModel)
+      expect(iface.intent_schema).to eq(
+                                         {
+                                             intents: [
+                                                 {
+                                                     intent: :"AMAZON.CancelIntent"
+                                                 }
+                                             ]
+                                         })
     end
   end
 end
