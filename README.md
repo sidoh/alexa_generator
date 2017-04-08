@@ -1,4 +1,8 @@
 # alexa_generator
+
+[![Gem Version](https://badge.fury.io/rb/alexa_generator.svg)](http://badge.fury.io/rb/alexa_generator)
+[![Build Status](https://travis-ci.org/sidoh/alexa_generator.svg)](https://travis-ci.org/sidoh/alexa_generator)
+
 Rubygem to generate the [interaction model](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit/docs/alexa-skills-kit-interaction-model-reference) for Amazon's Alexa API.
 
 ## Installing
@@ -29,11 +33,11 @@ model = AlexaGenerator::InteractionModel.build do |model|
     intent.add_slot(:Sign, AlexaGenerator::Slot::SlotType::LITERAL) do |slot|
       slot.add_bindings(*%w{Aries Taurus Gemini Cancer Leo Virgo Libra Scorpio Sagittarius Capricorn Aquarius Pisces})
     end
-    
+
     intent.add_slot(:Date, AlexaGenerator::Slot::SlotType::DATE) do |slot|
       slot.add_bindings('today', 'next Thursday', 'tomorrow')
     end
-    
+
     intent.add_utterance_template('what is the horoscope for {Sign}')
     intent.add_utterance_template('what will the horoscope for {Sign} be {Date}')
   end
