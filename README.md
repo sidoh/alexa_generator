@@ -7,7 +7,7 @@ Rubygem to generate the [interaction model](https://developer.amazon.com/public/
 
 ## Installing
 
-alexa_generator is available on [Rubygems](https://rubygems.org). You can install it with:
+alexa_generator is available on [Rubygems](https://rubygems.org). You can install it with: 
 
 ```
 $ gem install alexa_generator
