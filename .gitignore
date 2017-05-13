@@ -38,3 +38,4 @@ Gemfile.lock
 *.iml
 sync-upstream.sh
 
+.idea/
