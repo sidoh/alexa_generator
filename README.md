@@ -111,3 +111,11 @@ GetHoroscope what will the horoscope for {Virgo|Sign} be {next Thursday|Date}
 GetHoroscope what will the horoscope for {Virgo|Sign} be {today|Date}
 GetHoroscope what will the horoscope for {Virgo|Sign} be {tomorrow|Date}
 ```
+
+### Running tests
+
+Run the tests by issuing:
+
+```bash
+bundle exec rake
+```

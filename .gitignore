@@ -36,3 +36,6 @@ Gemfile.lock
 
 # IntelliJ
 *.iml
+sync-upstream.sh
+
+.idea/
