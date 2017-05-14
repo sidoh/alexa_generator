@@ -112,7 +112,7 @@ GetHoroscope what will the horoscope for {Virgo|Sign} be {today|Date}
 GetHoroscope what will the horoscope for {Virgo|Sign} be {tomorrow|Date}
 ```
 
-### Running tests
+## Running tests
 
 Run the tests by issuing:
 
